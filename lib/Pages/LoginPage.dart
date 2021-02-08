@@ -4,7 +4,7 @@ import 'package:mobileorderwaste/Widgets/LoginFormWidget.dart';
 class LoginPage extends StatefulWidget {
   LoginPage({Key key, this.title}) : super(key: key);
   final String title;
-  static const routeLogin = 'Login';
+  static const routeName = '/Login';
 
   @override
   _LoginPageState createState() => _LoginPageState();

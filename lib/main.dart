@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobileorderwaste/Pages/LoginPage.dart';
+import 'package:mobileorderwaste/Route/Router.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,7 +16,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.red,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: LoginPage(title: 'Login'),
+      initialRoute: LoginPage.routeName,
+      onGenerateRoute: (settings) => RouterNav.generateRoute(context, settings),
     );
   }
 }
