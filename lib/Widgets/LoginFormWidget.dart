@@ -1,13 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart';
 import 'package:mobileorderwaste/Models/LoginModel.dart';
 import 'package:mobileorderwaste/Models/UserModel.dart';
 import 'package:mobileorderwaste/Styles/GlobalStyles.dart';
 import 'package:mobileorderwaste/Utils/Utils.dart';
 import 'package:mobileorderwaste/Services/Services.dart';
+import 'package:mobileorderwaste/Models/GlobalModel.dart';
 
 class FormLoginW extends StatefulWidget {
   FormLoginW({Key key}) : super(key: key);
@@ -80,7 +78,8 @@ class _FormLoginWState extends State<FormLoginW> {
       utente.username = usrController.text;
       utente.password = pswController.text;
     });
-    Future<List<Loginres>> lista = getLogon();
+    //Future<List<Loginres>> lista =
+    getLogon();
   }
 
   void formOnChanged() {
@@ -104,25 +103,20 @@ class _FormLoginWState extends State<FormLoginW> {
     );
   }
 
-  String basicAuthenticationHeader(String username, String password) {
-    return 'Basic ' + base64Encode(utf8.encode('$username:$password'));
-  }
-
-  Future<List<Loginres>> getLogon() async {
+  void getLogon() async {
     Loginres decode = Loginres();
-    String path_uri = '/sap/opu/odata/WATP/MOW_SRV/Logons(\'42\')';
-    var uri = Uri.https('amafesplay.amaroma.it:8443', path_uri);
+    String pathUri = GlobalDataModel.getValueMap('logon');
+    var uri = Uri.https(GlobalDataModel.getValueMap('host'), pathUri);
     print(uri);
     final response =
-        GetService.getCall(uri, utente.username, utente.password) as Response;
+        await GetService.getCall(uri, utente.username, utente.password);
 
     if (response.statusCode == 200) {
       List<Loginres> list = decode.jsondecode(response.body);
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text("Login riuscito!"),
       ));
-      LoginUSer user = LoginUSer(utente.username, utente.password);
-      return list;
+      LoginUSer(utente.username, utente.password);
     } else {
       analizeStatusCode(context, response.statusCode);
       pswController.text = '';
