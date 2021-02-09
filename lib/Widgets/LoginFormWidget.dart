@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:mobileorderwaste/Models/LoginModel.dart';
 import 'package:mobileorderwaste/Models/UserModel.dart';
 import 'package:mobileorderwaste/Styles/GlobalStyles.dart';
+import 'package:mobileorderwaste/Utils/Dialog.dart';
 import 'package:http/http.dart' as http;
 
 class FormLoginW extends StatefulWidget {
@@ -78,8 +79,7 @@ class _FormLoginWState extends State<FormLoginW> {
       utente.username = usrController.text;
       utente.password = pswController.text;
     });
-    print("sono qui");
-    Future<List<D>> lista = getLogon();
+    Future<List<Loginres>> lista = getLogon();
   }
 
   void formOnChanged() {
@@ -107,32 +107,37 @@ class _FormLoginWState extends State<FormLoginW> {
     return 'Basic ' + base64Encode(utf8.encode('$username:$password'));
   }
 
-  Future<List<D>> getLogon() async {
-    //String basicAuth = 'Basic ' + 'ENG_04:Forzanapoli01';
-    String basicAuth =
-        'Basic ' + base64Encode(utf8.encode('ENG_04:Forzanapoli01'));
-    print(basicAuth);
+  Future<List<Loginres>> getLogon() async {
+    Loginres decode = Loginres();
+    // String basicAuth =
+    //     'Basic ' + base64Encode(utf8.encode('ENG_04:Forzanapoli01'));
+    //print(basicAuth);
     String path_uri = '/sap/opu/odata/WATP/MOW_SRV/Logons(\'42\')';
     var uri = Uri.https('amafesplay.amaroma.it:8443', path_uri);
     print(uri);
     final response = await http.get(uri, headers: {
       'content-type': 'application/json',
       'accept': 'application/json',
-      'authorization': basicAuth
+      'authorization':
+          basicAuthenticationHeader(utente.username, utente.password)
     });
-    print(response.statusCode);
+
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      print(response.body);
-      List<D> list = (loginresFromJson(response.body) as List).toList();
-      D primo = D();
-      print(primo.name);
+      List<Loginres> list = decode.jsondecode(response.body);
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text("Login riuscito!"),
+      ));
+      LoginUSer user = LoginUSer(utente.username, utente.password);
       return list;
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
-      throw Exception('Failed to load album');
+      showAlertDialog(
+          context, 'CHIUDI', 'Attenzione!', 'Username o Password errati');
+      pswController.text = '';
+      //throw Exception('Failed to load album');
     }
   }
 }
+
+class Feature {}

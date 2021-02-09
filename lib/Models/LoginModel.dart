@@ -2,39 +2,10 @@
 //
 //     final loginres = loginresFromJson(jsonString);
 
+import 'dart:collection';
 import 'dart:convert';
 
-Loginres loginresFromJson(String str) => Loginres.fromJson(json.decode(str));
-
-String loginresToJson(Loginres data) => json.encode(data.toJson());
-
 class Loginres {
-  Loginres({
-    this.d,
-  });
-
-  D d;
-
-  factory Loginres.fromJson(Map<String, dynamic> json) => Loginres(
-        d: D.fromJson(json["d"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "d": d.toJson(),
-      };
-}
-
-class D {
-  D({
-    this.metadata,
-    this.versionId,
-    this.fittVehicle,
-    this.perNr,
-    this.vehicleId,
-    this.role,
-    this.name,
-  });
-
   Metadata metadata;
   String versionId;
   String fittVehicle;
@@ -43,8 +14,25 @@ class D {
   String role;
   String name;
 
-  factory D.fromJson(Map<String, dynamic> json) => D(
-        metadata: Metadata.fromJson(json["__metadata"]),
+  Loginres(
+      {this.metadata,
+      this.versionId,
+      this.fittVehicle,
+      this.perNr,
+      this.vehicleId,
+      this.role,
+      this.name});
+
+  List<Loginres> jsondecode(jsonString) {
+    List<Loginres> list = (json.decode(jsonString) as LinkedHashMap)
+        .values
+        .map((data) => Loginres.fromJson(data))
+        .toList();
+    return list;
+  }
+
+  factory Loginres.fromJson(Map<String, dynamic> json) => Loginres(
+        //metadata: Metadata.fromJson(json["__metadata"]),
         versionId: json["VersionId"],
         fittVehicle: json["FittVehicle"],
         perNr: json["PerNr"],
@@ -53,15 +41,15 @@ class D {
         name: json["Name"],
       );
 
-  Map<String, dynamic> toJson() => {
-        "__metadata": metadata.toJson(),
-        "VersionId": versionId,
-        "FittVehicle": fittVehicle,
-        "PerNr": perNr,
-        "VehicleId": vehicleId,
-        "Role": role,
-        "Name": name,
-      };
+  // Map<String, dynamic> toJson() => {
+  //      "__metadata": metadata.toJson(),
+  //      "VersionId": versionId,
+  //     "FittVehicle": fittVehicle,
+  //     "PerNr": perNr,
+  //      "VehicleId": vehicleId,
+  //      "Role": role,
+  //      "Name": name,
+  //    };
 }
 
 class Metadata {
