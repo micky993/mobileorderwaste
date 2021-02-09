@@ -2,11 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart';
 import 'package:mobileorderwaste/Models/LoginModel.dart';
 import 'package:mobileorderwaste/Models/UserModel.dart';
 import 'package:mobileorderwaste/Styles/GlobalStyles.dart';
-import 'package:mobileorderwaste/Utils/Dialog.dart';
-import 'package:http/http.dart' as http;
+import 'package:mobileorderwaste/Utils/Utils.dart';
+import 'package:mobileorderwaste/Services/Services.dart';
 
 class FormLoginW extends StatefulWidget {
   FormLoginW({Key key}) : super(key: key);
@@ -109,18 +110,11 @@ class _FormLoginWState extends State<FormLoginW> {
 
   Future<List<Loginres>> getLogon() async {
     Loginres decode = Loginres();
-    // String basicAuth =
-    //     'Basic ' + base64Encode(utf8.encode('ENG_04:Forzanapoli01'));
-    //print(basicAuth);
     String path_uri = '/sap/opu/odata/WATP/MOW_SRV/Logons(\'42\')';
     var uri = Uri.https('amafesplay.amaroma.it:8443', path_uri);
     print(uri);
-    final response = await http.get(uri, headers: {
-      'content-type': 'application/json',
-      'accept': 'application/json',
-      'authorization':
-          basicAuthenticationHeader(utente.username, utente.password)
-    });
+    final response =
+        GetService.getCall(uri, utente.username, utente.password) as Response;
 
     if (response.statusCode == 200) {
       List<Loginres> list = decode.jsondecode(response.body);
@@ -130,12 +124,8 @@ class _FormLoginWState extends State<FormLoginW> {
       LoginUSer user = LoginUSer(utente.username, utente.password);
       return list;
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      showAlertDialog(
-          context, 'CHIUDI', 'Attenzione!', 'Username o Password errati');
+      analizeStatusCode(context, response.statusCode);
       pswController.text = '';
-      //throw Exception('Failed to load album');
     }
   }
 }

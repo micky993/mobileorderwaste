@@ -23,3 +23,20 @@ showAlertDialog(
     },
   );
 }
+
+void analizeStatusCode(BuildContext context, int code) {
+  switch (code) {
+    case 401:
+      showAlertDialog(
+          context, 'CHIUDI', 'Attenzione!', 'Username o Password errati');
+      break;
+    case 400:
+      showAlertDialog(
+          context, 'CHIUDI', 'Attenzione!', 'Errore serivzio Odata');
+      break;
+    case 500:
+      showAlertDialog(context, 'CHIUDI', 'Attenzione!', 'Errore Server');
+      break;
+    default:
+  }
+}
