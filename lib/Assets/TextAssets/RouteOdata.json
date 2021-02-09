@@ -1,0 +1,4 @@
+{
+    "host":"amafesplay.amaroma.it:8443",
+    "logon":"/sap/opu/odata/WATP/MOW_SRV/Logons('42')"
+}

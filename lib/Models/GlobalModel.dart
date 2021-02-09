@@ -1,16 +1,16 @@
-import 'dart:collection';
-import 'dart:convert';
-import 'dart:io';
-import 'package:flutter/services.dart';
-
 class GlobalDataModel {
-  final List list = new List();
-  HashMap globalData = new HashMap<String, String>();
+  static final Map<String, String> config = {
+    "host": "amafesplay.amaroma.it:8443",
+    "logon": "/sap/opu/odata/WATP/MOW_SRV/Logons('42')",
+    "veichle": "/sap/opu/odata/WATP/MOW_SRV/Veichle"
+  };
 
-  static void setHasMapValue() async {
-    HashMap map = new HashMap<String, String>();
-    String route = await rootBundle
-        .loadString('mobileorderwaste/Assets/TextAssets/RouteOdata');
-    map = (LineSplitter().convert(route) as Map).map(() => {});
+  static Map getMap() {
+    return config;
+  }
+
+  static String getValueMap(String key) {
+    String mykey = config[key].toString();
+    return mykey;
   }
 }

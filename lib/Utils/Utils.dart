@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 showAlertDialog(
@@ -39,4 +38,10 @@ void analizeStatusCode(BuildContext context, int code) {
       break;
     default:
   }
+
+  //snackBarShow(BuildContext context, String text) {
+  //  return Scaffold.of(context).showSnackBar(SnackBar(
+  //   content: Text(text),
+  // ));
+  //}
 }
