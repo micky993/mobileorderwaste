@@ -3,9 +3,9 @@ class Utente {
   String password;
 }
 
-class LoginUSer {
-  final String usr;
-  final String pwd;
+LoginUSer logonData;
 
-  LoginUSer(this.usr, this.pwd);
+class LoginUSer {
+  String usr;
+  String pwd;
 }

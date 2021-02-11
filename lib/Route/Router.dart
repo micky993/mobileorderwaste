@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobileorderwaste/Pages/LoginPage.dart';
+import 'package:mobileorderwaste/Pages/VehiclePage.dart';
 
 abstract class RouterNav {
   static Route<dynamic> generateRoute(
@@ -13,10 +14,10 @@ abstract class RouterNav {
             settings: settings);
         break;
 
-      //case Page1Screen.routeName:
-      //  return MaterialPageRoute<String>(
-      //      builder: (context) => Page1Screen(), settings: settings);
-      //  break;
+      case VehiclePage.routeName:
+        return MaterialPageRoute(
+            builder: (context) => VehiclePage(), settings: settings);
+        break;
 
       default:
         return MaterialPageRoute(

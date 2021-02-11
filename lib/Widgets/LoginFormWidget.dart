@@ -6,6 +6,7 @@ import 'package:mobileorderwaste/Styles/GlobalStyles.dart';
 import 'package:mobileorderwaste/Utils/Utils.dart';
 import 'package:mobileorderwaste/Services/Services.dart';
 import 'package:mobileorderwaste/Models/GlobalModel.dart';
+import 'package:mobileorderwaste/Pages/VehiclePage.dart';
 
 class FormLoginW extends StatefulWidget {
   FormLoginW({Key key}) : super(key: key);
@@ -17,13 +18,15 @@ class FormLoginW extends StatefulWidget {
 class _FormLoginWState extends State<FormLoginW> {
   GlobalTextInput textStyle = GlobalTextInput();
   bool isLoginDisabled = true;
-  Utente utente = Utente();
+  Utente utente = new Utente();
   TextEditingController usrController = TextEditingController();
   TextEditingController pswController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    usrController.text = '';
+    pswController.text = '';
     usrController.addListener(formOnChanged);
     usrController.addListener(removeSomeChar);
     pswController.addListener(formOnChanged);
@@ -78,8 +81,8 @@ class _FormLoginWState extends State<FormLoginW> {
       utente.username = usrController.text;
       utente.password = pswController.text;
     });
-    //Future<List<Loginres>> lista =
     getLogon();
+    //List<Loginres> lista =
   }
 
   void formOnChanged() {
@@ -105,23 +108,27 @@ class _FormLoginWState extends State<FormLoginW> {
 
   void getLogon() async {
     Loginres decode = Loginres();
+    List<Loginres> list = [];
     String pathUri = GlobalDataModel.getValueMap('logon');
     var uri = Uri.https(GlobalDataModel.getValueMap('host'), pathUri);
     print(uri);
     final response =
         await GetService.getCall(uri, utente.username, utente.password);
-
     if (response.statusCode == 200) {
-      List<Loginres> list = decode.jsondecode(response.body);
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Login riuscito!"),
-      ));
-      LoginUSer(utente.username, utente.password);
+      list = decode.jsondecode(response.body);
+      logonData.usr = utente.username;
+      logonData.pwd = utente.password;
+      if (list.isNotEmpty) {
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text("Login riuscito!"),
+        ));
+      }
+      Navigator.pushNamed(context, VehiclePage.routeName,
+          arguments: 'Selezione profilo');
     } else {
       analizeStatusCode(context, response.statusCode);
       pswController.text = '';
     }
+    //return list;
   }
 }
-
-class Feature {}
