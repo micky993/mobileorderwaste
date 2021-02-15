@@ -111,13 +111,11 @@ class _FormLoginWState extends State<FormLoginW> {
     List<Loginres> list = [];
     String pathUri = GlobalDataModel.getValueMap('logon');
     var uri = Uri.https(GlobalDataModel.getValueMap('host'), pathUri);
-    print(uri);
     final response =
         await GetService.getCall(uri, utente.username, utente.password);
     if (response.statusCode == 200) {
       list = decode.jsondecode(response.body);
-      logonData.usr = utente.username;
-      logonData.pwd = utente.password;
+      logonDataSet(utente.username, utente.password);
       if (list.isNotEmpty) {
         Scaffold.of(context).showSnackBar(SnackBar(
           content: Text("Login riuscito!"),
@@ -129,6 +127,5 @@ class _FormLoginWState extends State<FormLoginW> {
       analizeStatusCode(context, response.statusCode);
       pswController.text = '';
     }
-    //return list;
   }
 }

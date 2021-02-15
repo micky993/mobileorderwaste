@@ -41,15 +41,15 @@ class Loginres {
         name: json["Name"],
       );
 
-  // Map<String, dynamic> toJson() => {
-  //      "__metadata": metadata.toJson(),
-  //      "VersionId": versionId,
-  //     "FittVehicle": fittVehicle,
-  //     "PerNr": perNr,
-  //      "VehicleId": vehicleId,
-  //      "Role": role,
-  //      "Name": name,
-  //    };
+  Map<String, dynamic> toJson() => {
+        "__metadata": metadata.toJson(),
+        "VersionId": versionId,
+        "FittVehicle": fittVehicle,
+        "PerNr": perNr,
+        "VehicleId": vehicleId,
+        "Role": role,
+        "Name": name,
+      };
 }
 
 class Metadata {

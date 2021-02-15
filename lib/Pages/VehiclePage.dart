@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobileorderwaste/Widgets/VehicleWidget.dart';
 
 class VehiclePage extends StatefulWidget {
   VehiclePage({Key key}) : super(key: key);
@@ -15,7 +16,7 @@ class _VeichlePageState extends State<VehiclePage> {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: Column(),
+      body: VeichleWidget(),
       persistentFooterButtons: <Widget>[Text("prova")],
     );
   }
