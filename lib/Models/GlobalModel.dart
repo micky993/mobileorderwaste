@@ -2,7 +2,7 @@ class GlobalDataModel {
   static final Map<String, String> config = {
     "host": "amafesplay.amaroma.it:8443",
     "logon": "/sap/opu/odata/WATP/MOW_SRV/Logons('42')",
-    "vehicle": "/sap/opu/odata/WATP/MOW_SRV/Veichle"
+    "vehicle": "/sap/opu/odata/WATP/MOW_SRV/Vehicles"
   };
 
   static Map getMap() {

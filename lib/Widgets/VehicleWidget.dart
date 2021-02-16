@@ -15,8 +15,8 @@ class VeichleWidget extends StatefulWidget {
 
 class _VeichleWidgetState extends State<VeichleWidget> {
   String roleValue;
-  Result equipment;
-  VehicleRes myItemsLoop;
+  String equipment;
+  Future<VehicleRes> myItemsLoop;
   var list;
   GlobalTextInput textStyle = GlobalTextInput();
 
@@ -46,25 +46,29 @@ class _VeichleWidgetState extends State<VeichleWidget> {
                 ],
                 onChanged: (value) {
                   setState(() => {roleValue = value});
-                  list = getVehicle(value);
+                  myItemsLoop = getVehicle(value);
                 },
               ),
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(20),
-            child: SizedBox(
-              width: double.infinity,
-              child: DropdownButton<Result>(
-                  isExpanded: true,
-                  hint: Text('Mezzo'),
-                  value: equipment,
-                  items: (list != null) ? binding() : [],
-                  onChanged: (value) {
-                    setState(() => {equipment = value});
-                  }),
-            ),
-          )
+              padding: EdgeInsets.all(20),
+              child: SizedBox(
+                width: double.infinity,
+                child: FutureBuilder<VehicleRes>(
+                  future: myItemsLoop,
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    return DropdownButton<String>(
+                        isExpanded: true,
+                        hint: Text('Mezzo'),
+                        value: equipment,
+                        items: (snapshot.hasData) ? binding(snapshot) : [],
+                        onChanged: (equi) {
+                          setState(() => {equipment = equi});
+                        });
+                  },
+                ),
+              )),
         ],
       ),
     );
@@ -83,26 +87,28 @@ class _VeichleWidgetState extends State<VeichleWidget> {
           showAlertDialog(
               context, 'OK', 'Attenzione!', 'Nessun Wdo da prendere in carico');
         }
-        myItemsLoop = vehicleRes;
         return vehicleRes;
       } else {
         analizeStatusCode(context, response.statusCode);
       }
+    } else {
+      myItemsLoop = null;
     }
   }
 
-  DropdownMenuItem<Result> binding() {
-    List<Result> veicoli;
-    if (myItemsLoop != null) {
-      for (var item in myItemsLoop.d.results) {
-        veicoli.add(item);
-      }
-      veicoli.map<DropdownMenuItem<Result>>((Result item) {
-        return DropdownMenuItem<Result>(
-          value: item,
-          child: Text(''),
-        );
-      }).toList();
-    }
+  List<DropdownMenuItem<String>> binding(AsyncSnapshot snapshot) {
+    List<Result> veicoli = List<Result>();
+    //for (VehicleRes item in snapshot.data) {
+    //  veicoli.add(item);
+    //}
+    VehicleRes item = snapshot.data;
+    veicoli = item.d.results.toList();
+    print(veicoli);
+    return veicoli.map<DropdownMenuItem<String>>((Result item) {
+      return DropdownMenuItem<String>(
+        value: item.vehicleId,
+        child: Text('${item.fleetVin}'),
+      );
+    }).toList();
   }
 }
