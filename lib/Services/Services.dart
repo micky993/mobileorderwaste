@@ -16,4 +16,16 @@ class GetService {
     });
     return response;
   }
+
+  static Future<Response> putCall(
+      Uri uri, String username, String password, String json) async {
+    Response response = await http.put(uri,
+        headers: {
+          'content-type': 'application/json',
+          'accept': 'application/json',
+          'authorization': basicAuthenticationHeader(username, password)
+        },
+        body: json);
+    return response;
+  }
 }
