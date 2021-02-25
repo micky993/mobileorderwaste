@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Mobile Order Waste',
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primaryColor: Colors.red.shade900,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       initialRoute: LoginPage.routeName,

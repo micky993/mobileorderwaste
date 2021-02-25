@@ -5,21 +5,20 @@ import 'package:mobileorderwaste/Models/UserModel.dart';
 import 'package:mobileorderwaste/Styles/GlobalStyles.dart';
 import 'package:mobileorderwaste/Models/VehicleModel.dart';
 import 'package:mobileorderwaste/Utils/Utils.dart';
+import 'package:mobileorderwaste/Models/LoginModel.dart' as login;
 
 class VeichleWidget extends StatefulWidget {
   VeichleWidget({Key key}) : super(key: key);
-
   @override
   _VeichleWidgetState createState() => _VeichleWidgetState();
 }
 
 class _VeichleWidgetState extends State<VeichleWidget> {
-  String roleValue;
-  String equipment;
   Future<VehicleRes> myItemsLoop;
   var list;
   GlobalTextInput textStyle = GlobalTextInput();
-
+  String roleValue;
+  String equipment;
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -69,6 +68,17 @@ class _VeichleWidgetState extends State<VeichleWidget> {
                   },
                 ),
               )),
+          Padding(
+            padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                child: Text('Ok'),
+                onPressed: _onOkPress,
+                style: textStyle.btnStyle(),
+              ),
+            ),
+          )
         ],
       ),
     );
@@ -110,5 +120,29 @@ class _VeichleWidgetState extends State<VeichleWidget> {
         child: Text('${item.fleetVin}'),
       );
     }).toList();
+  }
+
+  void _onOkPress() async {
+    LoginUSer loginData = LoginUSer.getLogonData();
+    login.D newlogin = login.D();
+    newlogin.fittVehicle = loginData.fittVehicle;
+    newlogin.name = loginData.name;
+    newlogin.perNr = loginData.perNr;
+    newlogin.role = roleValue;
+    newlogin.vehicleId = equipment;
+    newlogin.versionId = loginData.versionId;
+    var uris = Uri.https(GlobalDataModel.getValueMap('host'),
+        GlobalDataModel.getValueMap('metadata'));
+    await GetService.getDataCall(loginData.user, loginData.pwd, uris);
+
+    String pathUri = GlobalDataModel.getValueMap('logonW');
+    var uri = Uri.https(GlobalDataModel.getValueMap('host'), pathUri);
+    String uriS = uri.toString();
+    newlogin.metadata = login.Metadata(id: uriS, uri: uriS, type: 'MOW.Logon');
+    login.LoginRes log = login.LoginRes(d: newlogin);
+    String jsonLogin = login.loginResToJson(log);
+    final response =
+        await GetService.putCall(uri, loginData.user, loginData.pwd, jsonLogin);
+    if (response.statusCode == 201) {}
   }
 }

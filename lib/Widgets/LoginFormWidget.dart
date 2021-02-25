@@ -107,21 +107,30 @@ class _FormLoginWState extends State<FormLoginW> {
   }
 
   void getLogon() async {
-    Loginres decode = Loginres();
-    List<Loginres> list = [];
     String pathUri = GlobalDataModel.getValueMap('logon');
     var uri = Uri.https(GlobalDataModel.getValueMap('host'), pathUri);
     final response =
-        await GetService.getCall(uri, utente.username, utente.password);
+        await GetService.getCallLogon(uri, utente.username, utente.password);
     if (response.statusCode == 200) {
-      list = decode.jsondecode(response.body);
-      logonDataSet(utente.username, utente.password);
-      if (list.isNotEmpty) {
+      LoginRes loginRes = loginResFromJson(response.body);
+      LoginUSer user = LoginUSer();
+      user.user = utente.username.toUpperCase();
+      user.pwd = utente.password;
+      user.fittVehicle = loginRes.d.fittVehicle;
+      user.name = loginRes.d.name;
+      user.perNr = loginRes.d.perNr;
+      user.role = loginRes.d.role;
+      user.vehicleId = loginRes.d.vehicleId;
+      user.versionId = loginRes.d.versionId;
+
+      logonDataSet(user);
+      if (loginRes.d.perNr != null) {
         Scaffold.of(context).showSnackBar(SnackBar(
           content: Text("Login riuscito!"),
         ));
       }
-      Navigator.pushNamed(context, VehiclePage.routeName,
+      Navigator.pushNamedAndRemoveUntil(
+          context, VehiclePage.routeName, (_) => false,
           arguments: 'Selezione profilo');
     } else {
       analizeStatusCode(context, response.statusCode);

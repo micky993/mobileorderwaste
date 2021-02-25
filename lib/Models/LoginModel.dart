@@ -1,11 +1,40 @@
 // To parse this JSON data, do
 //
-//     final loginres = loginresFromJson(jsonString);
+//     final loginRes = loginResFromJson(jsonString);
 
-import 'dart:collection';
 import 'dart:convert';
 
-class Loginres {
+LoginRes loginResFromJson(String str) => LoginRes.fromJson(json.decode(str));
+
+String loginResToJson(LoginRes data) => json.encode(data.toJson());
+
+class LoginRes {
+  LoginRes({
+    this.d,
+  });
+
+  D d;
+
+  factory LoginRes.fromJson(Map<String, dynamic> json) => LoginRes(
+        d: D.fromJson(json["d"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "d": d.toJson(),
+      };
+}
+
+class D {
+  D({
+    this.metadata,
+    this.versionId,
+    this.fittVehicle,
+    this.perNr,
+    this.vehicleId,
+    this.role,
+    this.name,
+  });
+
   Metadata metadata;
   String versionId;
   String fittVehicle;
@@ -14,25 +43,8 @@ class Loginres {
   String role;
   String name;
 
-  Loginres(
-      {this.metadata,
-      this.versionId,
-      this.fittVehicle,
-      this.perNr,
-      this.vehicleId,
-      this.role,
-      this.name});
-
-  List<Loginres> jsondecode(jsonString) {
-    List<Loginres> list = (json.decode(jsonString) as LinkedHashMap)
-        .values
-        .map((data) => Loginres.fromJson(data))
-        .toList();
-    return list;
-  }
-
-  factory Loginres.fromJson(Map<String, dynamic> json) => Loginres(
-        //metadata: Metadata.fromJson(json["__metadata"]),
+  factory D.fromJson(Map<String, dynamic> json) => D(
+        metadata: Metadata.fromJson(json["__metadata"]),
         versionId: json["VersionId"],
         fittVehicle: json["FittVehicle"],
         perNr: json["PerNr"],

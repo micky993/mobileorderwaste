@@ -38,10 +38,4 @@ void analizeStatusCode(BuildContext context, int code) {
       break;
     default:
   }
-
-  //snackBarShow(BuildContext context, String text) {
-  //  return Scaffold.of(context).showSnackBar(SnackBar(
-  //   content: Text(text),
-  // ));
-  //}
 }

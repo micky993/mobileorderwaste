@@ -4,8 +4,7 @@ class Utente {
 }
 
 LoginUSer logonData;
-logonDataSet(String username, String password) =>
-    LoginUSer.setLogonData(username, password);
+logonDataSet(LoginUSer userData) => LoginUSer.setLogonData(userData);
 
 LoginUSer logonDataGet(String username, String password) =>
     LoginUSer.getLogonData();
@@ -13,11 +12,23 @@ LoginUSer logonDataGet(String username, String password) =>
 class LoginUSer {
   String user;
   String pwd;
+  String fittVehicle;
+  String perNr;
+  String vehicleId;
+  String role;
+  String name;
+  String versionId;
 
-  static void setLogonData(String username, String password) {
+  static void setLogonData(LoginUSer userData) {
     logonData = new LoginUSer();
-    logonData.user = username;
-    logonData.pwd = password;
+    logonData.user = userData.user;
+    logonData.pwd = userData.pwd;
+    logonData.fittVehicle = userData.fittVehicle;
+    logonData.name = userData.name;
+    logonData.perNr = userData.perNr;
+    logonData.role = userData.role;
+    logonData.vehicleId = userData.vehicleId;
+    logonData.versionId = userData.versionId;
   }
 
   static LoginUSer getLogonData() {

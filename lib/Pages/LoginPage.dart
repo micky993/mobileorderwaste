@@ -17,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
         key: UniqueKey(),
         appBar: AppBar(
           title: Text(widget.title),
+          automaticallyImplyLeading: false,
         ),
         body: FormLoginW());
   }
