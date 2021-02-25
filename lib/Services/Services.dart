@@ -60,6 +60,23 @@ class GetService {
           HttpHeaders.acceptHeader: 'application/json',
           HttpHeaders.setCookieHeader: getCookie(),
           HttpHeaders.connectionHeader: 'keep-alive',
+          'X-Requested-With': 'X',
+          HttpHeaders.authorizationHeader:
+              basicAuthenticationHeader(username, password)
+        },
+        body: json);
+    return response;
+  }
+
+  static Future<Response> postCall(
+      Uri uri, String username, String password, String json) async {
+    Response response = await http.post(uri,
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          HttpHeaders.acceptHeader: 'application/json',
+          HttpHeaders.setCookieHeader: getCookie(),
+          HttpHeaders.connectionHeader: 'keep-alive',
+          'X-Requested-With': 'X',
           HttpHeaders.authorizationHeader:
               basicAuthenticationHeader(username, password)
         },

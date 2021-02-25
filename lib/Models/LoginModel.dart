@@ -54,7 +54,7 @@ class D {
       );
 
   Map<String, dynamic> toJson() => {
-        "__metadata": metadata.toJson(),
+        //"__metadata": metadata.toJson(),
         "VersionId": versionId,
         "FittVehicle": fittVehicle,
         "PerNr": perNr,

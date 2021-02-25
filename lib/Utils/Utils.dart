@@ -1,4 +1,31 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:mobileorderwaste/Models/LogoffModel.dart';
+import 'package:mobileorderwaste/Models/UserModel.dart';
+import 'package:mobileorderwaste/Services/Services.dart';
+import 'package:mobileorderwaste/Models/GlobalModel.dart';
+
+Future logOff(BuildContext context, {String equipment}) async {
+  buildShowDialog(context);
+  LoginUSer loginData = LoginUSer.getLogonData();
+  D logoff = D();
+  logoff.versionId = '42';
+  (equipment != null) ? logoff.vehicleId = equipment : logoff.vehicleId = '';
+  Logoff logoffData = Logoff(d: logoff);
+  String json = logoffToJson(logoffData);
+  String pathUri = GlobalDataModel.getValueMap('logoff');
+  var uri = Uri.https(GlobalDataModel.getValueMap('host'), pathUri);
+  final response =
+      await GetService.postCall(uri, loginData.user, loginData.pwd, json)
+          .whenComplete(() => Navigator.of(context).pop());
+  if (!response.statusCode.toString().startsWith('2')) {
+    analizeStatusCode(context, response.statusCode, response.body);
+  } else {
+    showAlertDialog(context, 'OK', '', 'Logoff effettuato con successo');
+  }
+}
 
 showAlertDialog(
     BuildContext context, String btnName, String title, String message) {
@@ -23,19 +50,43 @@ showAlertDialog(
   );
 }
 
-void analizeStatusCode(BuildContext context, int code) {
-  switch (code) {
-    case 401:
-      showAlertDialog(
-          context, 'CHIUDI', 'Attenzione!', 'Username o Password errati');
+void analizeStatusCode(BuildContext context, int code, String body) {
+  String codeString = code.toString();
+  String codePartial = codeString.substring(0, 2);
+  switch (codePartial) {
+    case '40':
+      switch (code) {
+        case 401:
+          showAlertDialog(
+              context, 'CHIUDI', 'Attenzione!', 'Username o Password errati');
+          break;
+        case 400:
+          var jsonbody = json.decode(body);
+          showAlertDialog(context, 'CHIUDI', 'Attenzione!',
+              jsonbody['error']['message']['value']);
+          break;
+      }
       break;
-    case 400:
-      showAlertDialog(
-          context, 'CHIUDI', 'Attenzione!', 'Errore serivzio Odata');
+
       break;
-    case 500:
-      showAlertDialog(context, 'CHIUDI', 'Attenzione!', 'Errore Server');
+    case '50':
+      var jsonbody = json.decode(body);
+      showAlertDialog(context, 'CHIUDI', 'Attenzione!',
+          jsonbody['error']['message']['value']);
       break;
+    case '30':
+
     default:
   }
+}
+
+buildShowDialog(BuildContext context) {
+  return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      });
 }

@@ -4,6 +4,7 @@ import 'package:mobileorderwaste/Widgets/VehicleWidget.dart';
 import 'package:mobileorderwaste/Styles/GlobalStyles.dart';
 import 'package:mobileorderwaste/Models/UserModel.dart';
 import 'package:confirm_dialog/confirm_dialog.dart';
+import 'package:mobileorderwaste/Utils/Utils.dart' as util;
 
 class VehiclePage extends StatefulWidget {
   VehiclePage({Key key}) : super(key: key);
@@ -35,6 +36,7 @@ class _VeichlePageState extends State<VehiclePage> {
                       textOK: Text('Si'),
                       textCancel: Text('No'),
                     )) {
+                      await util.logOff(context);
                       Navigator.pushReplacementNamed(
                           context, LoginPage.routeName,
                           arguments: 'Login');

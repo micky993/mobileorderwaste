@@ -6,6 +6,7 @@ import 'package:mobileorderwaste/Styles/GlobalStyles.dart';
 import 'package:mobileorderwaste/Models/VehicleModel.dart';
 import 'package:mobileorderwaste/Utils/Utils.dart';
 import 'package:mobileorderwaste/Models/LoginModel.dart' as login;
+import 'dart:io';
 
 class VeichleWidget extends StatefulWidget {
   VeichleWidget({Key key}) : super(key: key);
@@ -86,11 +87,13 @@ class _VeichleWidgetState extends State<VeichleWidget> {
 
   Future<VehicleRes> getVehicle(String role) async {
     if (role == '01') {
+      buildShowDialog(context);
       String pathUri = GlobalDataModel.getValueMap('vehicle');
       var uri = Uri.https(GlobalDataModel.getValueMap('host'), pathUri);
       LoginUSer loginData = LoginUSer.getLogonData();
       final response =
-          await GetService.getCall(uri, logonData.user, logonData.pwd);
+          await GetService.getCall(uri, logonData.user, logonData.pwd)
+              .whenComplete(() => Navigator.of(context).pop());
       if (response.statusCode == 200) {
         VehicleRes vehicleRes = vehicleResFromJson(response.body);
         if (vehicleRes.d.results.isEmpty) {
@@ -99,7 +102,7 @@ class _VeichleWidgetState extends State<VeichleWidget> {
         }
         return vehicleRes;
       } else {
-        analizeStatusCode(context, response.statusCode);
+        analizeStatusCode(context, response.statusCode, response.body);
       }
     } else {
       myItemsLoop = null;
@@ -108,9 +111,6 @@ class _VeichleWidgetState extends State<VeichleWidget> {
 
   List<DropdownMenuItem<String>> binding(AsyncSnapshot snapshot) {
     List<Result> veicoli = List<Result>();
-    //for (VehicleRes item in snapshot.data) {
-    //  veicoli.add(item);
-    //}
     VehicleRes item = snapshot.data;
     veicoli = item.d.results.toList();
     print(veicoli);
@@ -131,18 +131,15 @@ class _VeichleWidgetState extends State<VeichleWidget> {
     newlogin.role = roleValue;
     newlogin.vehicleId = equipment;
     newlogin.versionId = loginData.versionId;
-    var uris = Uri.https(GlobalDataModel.getValueMap('host'),
-        GlobalDataModel.getValueMap('metadata'));
-    await GetService.getDataCall(loginData.user, loginData.pwd, uris);
-
-    String pathUri = GlobalDataModel.getValueMap('logonW');
+    String pathUri = GlobalDataModel.getValueMap('logon');
     var uri = Uri.https(GlobalDataModel.getValueMap('host'), pathUri);
-    String uriS = uri.toString();
-    newlogin.metadata = login.Metadata(id: uriS, uri: uriS, type: 'MOW.Logon');
     login.LoginRes log = login.LoginRes(d: newlogin);
     String jsonLogin = login.loginResToJson(log);
     final response =
         await GetService.putCall(uri, loginData.user, loginData.pwd, jsonLogin);
-    if (response.statusCode == 201) {}
+    if (response.statusCode.toString().startsWith('20')) {
+    } else {
+      analizeStatusCode(context, response.statusCode, response.body);
+    }
   }
 }
