@@ -6,7 +6,7 @@ import 'package:mobileorderwaste/Styles/GlobalStyles.dart';
 import 'package:mobileorderwaste/Models/VehicleModel.dart';
 import 'package:mobileorderwaste/Utils/Utils.dart';
 import 'package:mobileorderwaste/Models/LoginModel.dart' as login;
-import 'dart:io';
+import 'package:mobileorderwaste/Pages/OrderPage.dart';
 
 class VeichleWidget extends StatefulWidget {
   VeichleWidget({Key key}) : super(key: key);
@@ -113,7 +113,6 @@ class _VeichleWidgetState extends State<VeichleWidget> {
     List<Result> veicoli = List<Result>();
     VehicleRes item = snapshot.data;
     veicoli = item.d.results.toList();
-    print(veicoli);
     return veicoli.map<DropdownMenuItem<String>>((Result item) {
       return DropdownMenuItem<String>(
         value: item.vehicleId,
@@ -123,6 +122,7 @@ class _VeichleWidgetState extends State<VeichleWidget> {
   }
 
   void _onOkPress() async {
+    buildShowDialog(context);
     LoginUSer loginData = LoginUSer.getLogonData();
     login.D newlogin = login.D();
     newlogin.fittVehicle = loginData.fittVehicle;
@@ -131,13 +131,18 @@ class _VeichleWidgetState extends State<VeichleWidget> {
     newlogin.role = roleValue;
     newlogin.vehicleId = equipment;
     newlogin.versionId = loginData.versionId;
+    await GetService.getMetadata(loginData.user, loginData.pwd);
     String pathUri = GlobalDataModel.getValueMap('logon');
     var uri = Uri.https(GlobalDataModel.getValueMap('host'), pathUri);
     login.LoginRes log = login.LoginRes(d: newlogin);
     String jsonLogin = login.loginResToJson(log);
     final response =
-        await GetService.putCall(uri, loginData.user, loginData.pwd, jsonLogin);
+        await GetService.putCall(uri, loginData.user, loginData.pwd, jsonLogin)
+            .whenComplete(() => Navigator.of(context).pop());
     if (response.statusCode.toString().startsWith('20')) {
+      Navigator.pushNamedAndRemoveUntil(
+          context, OrderPage.routeName, (_) => false,
+          arguments: 'Ordini');
     } else {
       analizeStatusCode(context, response.statusCode, response.body);
     }

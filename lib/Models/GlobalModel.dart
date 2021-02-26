@@ -1,3 +1,5 @@
+//import 'package:flutter/material.dart';
+
 class GlobalDataModel {
   static final Map<String, String> config = {
     "host": "amafesplay.amaroma.it:8443",
