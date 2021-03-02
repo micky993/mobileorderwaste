@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+
 import 'package:mobileorderwaste/Services/Services.dart';
 import 'package:mobileorderwaste/Models/GlobalModel.dart';
 import 'package:mobileorderwaste/Models/UserModel.dart';
@@ -15,26 +15,31 @@ class OrderWidget extends StatefulWidget {
 }
 
 class _OrderWidgetState extends State<OrderWidget> {
+  Future<Orders> myOrders;
   @override
   Widget build(BuildContext context) {
-    getOrders();
-    return FutureBuilder(
-      initialData: [],
-      future: getOrders(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return builderSnap(context, snapshot);
-      },
-    );
+    return Center(
+        child: Padding(
+      padding: EdgeInsets.all(10),
+      child: FutureBuilder<List<Result>>(
+          future: getOrders(context),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            return (snapshot.hasData)
+                ? builderSnap(context, snapshot)
+                : Container();
+          }),
+    ));
   }
 }
 
-Future<List<Result>> getOrders() async {
-  // buildShowDialog(context);
+Future<List<Result>> getOrders(BuildContext context) async {
+  //buildShowDialog(context);
   String pathUri = GlobalDataModel.getValueMap('order');
   var uri = Uri.https(GlobalDataModel.getValueMap('host'), pathUri);
+  // ignore: unused_local_variable
   LoginUSer loginData = LoginUSer.getLogonData();
   var response = await GetService.getCall(uri, logonData.user, logonData.pwd);
-  //.whenComplete(() => Navigator.of(context).pop());
+  // .whenComplete(() => Navigator.of(context).pop());
   if (response.statusCode == 200) {
     Orders orders = ordersFromJson(response.body);
     if (orders.d.results.isEmpty) {
@@ -49,54 +54,91 @@ Future<List<Result>> getOrders() async {
 }
 
 Widget builderSnap(BuildContext context, AsyncSnapshot snapshot) {
-  List<Result> order = snapshot.data;
+  //Orders myOrder = snapshot.data;
+  List<Result> res = snapshot.data;
+  //Navigator.of(context).pop();
   return ListView.builder(
-      itemCount: order.length,
+      itemCount: res.length,
       itemBuilder: (context, index) {
-        var item = order[index];
-        return Slidable(
-          actionPane: SlidableDrawerActionPane(),
-          actionExtentRatio: 0.25,
-          child: Container(
-            color: Colors.white,
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: Colors.indigoAccent,
-                child: Text('1'),
-                foregroundColor: Colors.white,
-              ),
-              title: Text(item.orderNr),
-              subtitle: Text('SlidableDrawerDelegate'),
+        var item = res[index];
+        return Card(
+          elevation: 10,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          child: ListTile(
+            title: Row(
+              children: <Widget>[
+                Text(
+                  'WdO: ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text('${zeroDelete(item.orderNr)}'),
+              ],
             ),
+            subtitle: buildSubTitle(item, context),
+            onTap: () => {},
+            isThreeLine: true,
           ),
-          actions: <Widget>[
-            IconSlideAction(
-              caption: 'Archive',
-              color: Colors.blue,
-              icon: Icons.archive,
-              onTap: () => {},
-            ),
-            IconSlideAction(
-              caption: 'Share',
-              color: Colors.indigo,
-              icon: Icons.share,
-              onTap: () => {},
-            ),
-          ],
-          secondaryActions: <Widget>[
-            IconSlideAction(
-              caption: 'Presa in carico',
-              color: Colors.black45,
-              icon: Icons.more_horiz,
-              onTap: () => {},
-            ),
-            IconSlideAction(
-              caption: 'Delete',
-              color: Colors.red,
-              icon: Icons.delete,
-              onTap: () => {},
-            ),
-          ],
         );
       });
+}
+
+Widget buildSubTitle(Result item, BuildContext context) {
+  double c_width = MediaQuery.of(context).size.width * 0.8;
+  return Container(
+    padding: EdgeInsets.all(5.0),
+    width: c_width,
+    child: Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.all(5),
+          child: Row(
+            children: [
+              Text('Data: ', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('${dateFromatter(item.orderDate)}'),
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.all(5),
+          child: Row(
+            children: [
+              Text('Itinerario: ',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('${item.route}'),
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.all(5),
+          child: Row(
+            children: [
+              Text('Impianto/MMA:  ',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              Flexible(
+                child: Text(
+                  '${item.wdPlantDesc}',
+                  //overflow: TextOverflow.ellipsis,
+                ),
+              )
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.all(5),
+          child: Row(
+            children: [
+              Text('Testo:  ', style: TextStyle(fontWeight: FontWeight.bold)),
+              Flexible(
+                child: Text(
+                  '${item.orderText}',
+                  overflow: TextOverflow.ellipsis,
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
 }

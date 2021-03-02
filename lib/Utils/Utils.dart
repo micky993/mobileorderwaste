@@ -4,6 +4,9 @@ import 'package:mobileorderwaste/Models/LogoffModel.dart';
 import 'package:mobileorderwaste/Models/UserModel.dart';
 import 'package:mobileorderwaste/Services/Services.dart';
 import 'package:mobileorderwaste/Models/GlobalModel.dart';
+import 'package:intl/intl.dart';
+
+external String get timeZoneName;
 
 Future logOff(BuildContext context, {String equipment}) async {
   buildShowDialog(context);
@@ -87,4 +90,25 @@ buildShowDialog(BuildContext context) {
           child: CircularProgressIndicator(),
         );
       });
+}
+
+String dateFromatter(String date) {
+  DateTime convDate;
+  String dateconv;
+  RegExp exp = RegExp(r"(\d+)");
+  Iterable<Match> matches = exp.allMatches(date);
+  for (Match m in matches) {
+    String match = m[0];
+    int mat = int.parse(match);
+    //convDate = DateTime.fromMicrosecondsSinceEpoch(mat).toString();
+    convDate = DateTime.fromMillisecondsSinceEpoch(mat).toUtc().toLocal();
+    final DateFormat format = DateFormat('dd/MM/yyyy');
+    dateconv = format.format(convDate).toString();
+  }
+  return dateconv;
+}
+
+String zeroDelete(String value) {
+  String noZero = int.parse(value).toString();
+  return noZero;
 }

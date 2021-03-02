@@ -85,11 +85,13 @@ class _VeichleWidgetState extends State<VeichleWidget> {
     );
   }
 
+  // ignore: missing_return
   Future<VehicleRes> getVehicle(String role) async {
     if (role == '01') {
       buildShowDialog(context);
       String pathUri = GlobalDataModel.getValueMap('vehicle');
       var uri = Uri.https(GlobalDataModel.getValueMap('host'), pathUri);
+      // ignore: unused_local_variable
       LoginUSer loginData = LoginUSer.getLogonData();
       final response =
           await GetService.getCall(uri, logonData.user, logonData.pwd)
@@ -131,6 +133,7 @@ class _VeichleWidgetState extends State<VeichleWidget> {
     newlogin.role = roleValue;
     newlogin.vehicleId = equipment;
     newlogin.versionId = loginData.versionId;
+    // ignore: await_only_futures
     await GetService.getMetadata(loginData.user, loginData.pwd);
     String pathUri = GlobalDataModel.getValueMap('logon');
     var uri = Uri.https(GlobalDataModel.getValueMap('host'), pathUri);

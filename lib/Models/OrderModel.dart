@@ -173,7 +173,7 @@ class Result {
         mileageUnitEnd: json["MileageUnitEnd"],
         mileageUnitLast: json["MileageUnitLast"],
         objVersion: json["ObjVersion"],
-        orderDate: json["OrderDate"],
+        orderDate: (json["OrderDate"]),
         orderNr: json["OrderNr"],
         orderText: json["OrderText"],
         route: json["Route"],
